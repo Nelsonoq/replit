@@ -1,8 +1,13 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
   name: 'serverinfo',
   description: 'Mostra informações sobre o servidor',
-  async execute(message) {
-    const { guild } = message;
+  data: new SlashCommandBuilder()
+    .setName('serverinfo')
+    .setDescription('Mostra informações sobre o servidor'),
+  async execute(interaction) {
+    const guild = interaction.guild;
     
     const embed = {
       color: 0x00ff00,
@@ -45,6 +50,6 @@ module.exports = {
       timestamp: new Date()
     };
 
-    await message.reply({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed] });
   }
 };

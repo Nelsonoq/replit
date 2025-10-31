@@ -1,9 +1,27 @@
+const { SlashCommandBuilder } = require('discord.js');
+
 module.exports = {
   name: 'userinfo',
   description: 'Mostra informações sobre um usuário',
-  async execute(message) {
-    const user = message.mentions.users.first() || message.author;
-    const member = message.guild.members.cache.get(user.id);
+  data: new SlashCommandBuilder()
+    .setName('userinfo')
+    .setDescription('Mostra informações sobre um usuário')
+    .addUserOption(option =>
+      option.setName('usuario')
+        .setDescription('O usuário para ver informações')
+        .setRequired(false)),
+  async execute(interaction) {
+    const isSlash = interaction.isCommand?.();
+    
+    let user, member;
+    
+    if (isSlash) {
+      user = interaction.options.getUser('usuario') || interaction.user;
+      member = interaction.guild.members.cache.get(user.id);
+    } else {
+      user = interaction.mentions.users.first() || interaction.author;
+      member = interaction.guild.members.cache.get(user.id);
+    }
 
     const embed = {
       color: 0xff00ff,
@@ -41,6 +59,6 @@ module.exports = {
       timestamp: new Date()
     };
 
-    await message.reply({ embeds: [embed] });
+    await interaction.reply({ embeds: [embed] });
   }
 };

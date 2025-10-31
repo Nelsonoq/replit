@@ -68,6 +68,33 @@ client.on('messageCreate', async (message) => {
   }
 });
 
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  const command = client.commands.get(interaction.commandName);
+
+  if (!command) {
+    console.error(`❌ Comando ${interaction.commandName} não encontrado!`);
+    return;
+  }
+
+  try {
+    await command.execute(interaction, [], client, PREFIX);
+  } catch (error) {
+    console.error(`❌ Erro ao executar comando slash ${interaction.commandName}:`, error);
+    
+    try {
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp({ content: '❌ Houve um erro ao executar este comando!', ephemeral: true });
+      } else {
+        await interaction.reply({ content: '❌ Houve um erro ao executar este comando!', ephemeral: true });
+      }
+    } catch (replyError) {
+      console.error('❌ Não foi possível enviar mensagem de erro:', replyError);
+    }
+  }
+});
+
 const token = process.env.DISCORD_TOKEN;
 
 if (!token) {
