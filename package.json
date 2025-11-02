@@ -1,21 +1,15 @@
 {
   "name": "discord-bot",
   "version": "1.0.0",
-  "description": "Um bot do Discord em Node.js com comandos básicos",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node index.js"
+    "start": "node index.js"
   },
-  "keywords": [
-    "discord",
-    "bot",
-    "discord.js"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "discord.js": "^14.24.2",
-    "dotenv": "^17.2.3"
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "googleapis": "^164.1.0"
   }
 }

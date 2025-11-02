@@ -1,0 +1,22 @@
+[
+  {
+    "id": "T-MHGWR9XG",
+    "guildId": "1404390408825602088",
+    "channelId": "1434249299117604894",
+    "name": "pokemon",
+    "type": "swiss",
+    "description": "torneio de pokemon random battles",
+    "maxPlayers": null,
+    "players": [
+      {
+        "userId": "188398355792003073",
+        "username": "eoq",
+        "registeredAt": "2025-11-01T23:23:26.543Z"
+      }
+    ],
+    "status": "registration_open",
+    "bracket": null,
+    "createdAt": "2025-11-01T23:23:08.932Z",
+    "createdBy": "188398355792003073"
+  }
+]

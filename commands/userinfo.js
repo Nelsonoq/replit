@@ -1,64 +1,56 @@
-const { SlashCommandBuilder } = require('discord.js');
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
-module.exports = {
-  name: 'userinfo',
-  description: 'Mostra informações sobre um usuário',
+export default {
   data: new SlashCommandBuilder()
-    .setName('userinfo')
-    .setDescription('Mostra informações sobre um usuário')
-    .addUserOption(option =>
-      option.setName('usuario')
-        .setDescription('O usuário para ver informações')
-        .setRequired(false)),
-  async execute(interaction) {
-    const isSlash = interaction.isCommand?.();
-    
-    let user, member;
-    
-    if (isSlash) {
-      user = interaction.options.getUser('usuario') || interaction.user;
-      member = interaction.guild.members.cache.get(user.id);
-    } else {
-      user = interaction.mentions.users.first() || interaction.author;
-      member = interaction.guild.members.cache.get(user.id);
-    }
+    .setName("userinfo")
+    .setDescription("Shows information about a user")
+    .addUserOption((option) =>
+      option
+        .setName("user")
+        .setDescription("The user to view information about")
+        .setRequired(false),
+    ),
 
-    const embed = {
-      color: 0xff00ff,
-      title: '👤 Informações do Usuário',
-      thumbnail: {
-        url: user.displayAvatarURL({ dynamic: true, size: 256 })
-      },
-      fields: [
+  async execute(interaction, client) {
+    const user = interaction.options.getUser("user") || interaction.user;
+    const member = interaction.guild.members.cache.get(user.id);
+
+    const roles =
+      member && member.roles.cache.size > 1
+        ? member.roles.cache
+            .filter((role) => role.id !== interaction.guild.id)
+            .map((role) => role.toString())
+            .join(", ")
+        : "None";
+
+    const embed = new EmbedBuilder()
+      .setColor(0xff00ff)
+      .setTitle("👤 User Information")
+      .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 256 }))
+      .addFields(
+        { name: "👤 Name", value: user.tag, inline: true },
+        { name: "🆔 ID", value: user.id, inline: true },
+        { name: "🤖 Bot", value: user.bot ? "Yes" : "No", inline: true },
         {
-          name: '👤 Nome',
-          value: user.tag,
-          inline: true
+          name: "📅 Account Created",
+          value: user.createdAt.toLocaleDateString("en-US"),
+          inline: false,
         },
         {
-          name: '🆔 ID',
-          value: user.id,
-          inline: true
+          name: "📥 Joined Server",
+          value: member
+            ? member.joinedAt.toLocaleDateString("en-US")
+            : "Not available",
+          inline: false,
         },
         {
-          name: '🤖 Bot',
-          value: user.bot ? 'Sim' : 'Não',
-          inline: true
+          name: "🎭 Roles",
+          value: roles.length > 1024 ? "Too many roles to display" : roles,
+          inline: false,
         },
-        {
-          name: '📅 Conta criada em',
-          value: user.createdAt.toLocaleDateString('pt-BR'),
-          inline: false
-        },
-        {
-          name: '📥 Entrou no servidor em',
-          value: member ? member.joinedAt.toLocaleDateString('pt-BR') : 'Não disponível',
-          inline: false
-        }
-      ],
-      timestamp: new Date()
-    };
+      )
+      .setTimestamp();
 
     await interaction.reply({ embeds: [embed] });
-  }
+  },
 };

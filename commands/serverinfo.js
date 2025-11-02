@@ -1,55 +1,49 @@
-const { SlashCommandBuilder } = require('discord.js');
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
-module.exports = {
-  name: 'serverinfo',
-  description: 'Mostra informações sobre o servidor',
+export default {
   data: new SlashCommandBuilder()
-    .setName('serverinfo')
-    .setDescription('Mostra informações sobre o servidor'),
-  async execute(interaction) {
+    .setName("serverinfo")
+    .setDescription("Shows information about the server"),
+
+  async execute(interaction, client) {
     const guild = interaction.guild;
-    
-    const embed = {
-      color: 0x00ff00,
-      title: `📊 Informações do Servidor`,
-      thumbnail: {
-        url: guild.iconURL({ dynamic: true })
-      },
-      fields: [
+
+    const embed = new EmbedBuilder()
+      .setColor(0x00ff00)
+      .setTitle("📊 Server Information")
+      .setThumbnail(guild.iconURL({ dynamic: true }))
+      .addFields(
+        { name: "🏷️ Name", value: guild.name, inline: true },
+        { name: "🆔 ID", value: guild.id, inline: true },
+        { name: "👑 Owner", value: `<@${guild.ownerId}>`, inline: true },
         {
-          name: '🏷️ Nome',
-          value: guild.name,
-          inline: true
-        },
-        {
-          name: '🆔 ID',
-          value: guild.id,
-          inline: true
-        },
-        {
-          name: '👑 Dono',
-          value: `<@${guild.ownerId}>`,
-          inline: true
-        },
-        {
-          name: '👥 Membros',
+          name: "👥 Members",
           value: guild.memberCount.toString(),
-          inline: true
+          inline: true,
         },
         {
-          name: '📅 Criado em',
-          value: guild.createdAt.toLocaleDateString('pt-BR'),
-          inline: true
+          name: "📅 Created",
+          value: guild.createdAt.toLocaleDateString("en-US"),
+          inline: true,
         },
         {
-          name: '🎭 Roles',
+          name: "🎭 Roles",
           value: guild.roles.cache.size.toString(),
-          inline: true
-        }
-      ],
-      timestamp: new Date()
-    };
+          inline: true,
+        },
+        {
+          name: "💬 Channels",
+          value: guild.channels.cache.size.toString(),
+          inline: true,
+        },
+        {
+          name: "😀 Emojis",
+          value: guild.emojis.cache.size.toString(),
+          inline: true,
+        },
+      )
+      .setTimestamp();
 
     await interaction.reply({ embeds: [embed] });
-  }
+  },
 };
