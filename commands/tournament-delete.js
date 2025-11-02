@@ -10,7 +10,7 @@ import {
   loadTournaments,
   deleteTournament,
 } from "../utils/tournament-manager.js";
-import { removeTournamentTab } from "../utils/google-sheets-manager.js";
+// import { removeTournamentTab } from "../utils/google-sheets-manager.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -120,11 +120,11 @@ export default {
       if (i.customId === "confirm_delete") {
         deleteTournament(tournamentId, interaction.guild.id);
 
-        try {
-          await removeTournamentTab(interaction.guild.id, tournamentId);
-        } catch (err) {
-          console.error("❌ Error removing Google Sheet tab:", err);
-        }
+        // try {
+        //   await removeTournamentTab(interaction.guild.id, tournamentId);
+        // } catch (err) {
+        //   console.error("❌ Error removing Google Sheet tab:", err);
+        // }
 
         const successEmbed = new EmbedBuilder()
           .setColor(0x00ff00)

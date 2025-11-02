@@ -3,7 +3,7 @@ import {
   loadTournaments,
   saveTournaments,
 } from "../utils/tournament-manager.js";
-import { updateTournamentTab } from "../utils/google-sheets-manager.js";
+// import { updateTournamentTab } from "../utils/google-sheets-manager.js";
 
 export default {
   data: new SlashCommandBuilder()
@@ -94,15 +94,15 @@ export default {
     saveTournaments(tournaments);
 
     // Atualizar Google Sheet
-    try {
-      await updateTournamentTab(
-        interaction.guild.id,
-        interaction.guild.name,
-        tournament,
-      );
-    } catch (err) {
-      console.error("❌ Error updating Google Sheet:", err);
-    }
+    // try {
+    //   await updateTournamentTab(
+    //     interaction.guild.id,
+    //     interaction.guild.name,
+    //     tournament,
+    //   );
+    // } catch (err) {
+    //   console.error("❌ Error updating Google Sheet:", err);
+    // }
 
     const embed = new EmbedBuilder()
       .setColor(0x00ff00)
