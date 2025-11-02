@@ -156,153 +156,153 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 // Handler para autocomplete
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isAutocomplete()) return;
+// client.on("interactionCreate", async (interaction) => {
+//   if (!interaction.isAutocomplete()) return;
 
-  const command = client.commands.get(interaction.commandName);
+//   const command = client.commands.get(interaction.commandName);
 
-  if (!command || !command.autocomplete) return;
+//   if (!command || !command.autocomplete) return;
 
-  try {
-    await command.autocomplete(interaction);
-  } catch (err) {
-    console.error(
-      `❌ Error in autocomplete for ${interaction.commandName}:`,
-      err,
-    );
-  }
-});
+//   try {
+//     await command.autocomplete(interaction);
+//   } catch (err) {
+//     console.error(
+//       `❌ Error in autocomplete for ${interaction.commandName}:`,
+//       err,
+//     );
+//   }
+// });
 
 // ===== SISTEMA DE XP POR VOICE CHANNEL =====
-import { addXP } from "./utils/voice-xp-manager.js";
+// import { addXP } from "./utils/voice-xp-manager.js";
 
-// Tracking de users em voice channels
-const voiceTracker = new Map(); // userId -> { joinTime, guildId }
+// // Tracking de users em voice channels
+// const voiceTracker = new Map(); // userId -> { joinTime, guildId }
 
-// ===== SISTEMA DE AUTO-ROLE POR VOICE CHANNEL =====
-import { getRolesForChannel } from "./utils/voice-role-manager.js";
+// // ===== SISTEMA DE AUTO-ROLE POR VOICE CHANNEL =====
+// import { getRolesForChannel } from "./utils/voice-role-manager.js";
 
 // Event handler para Voice State Updates
-client.on("voiceStateUpdate", async (oldState, newState) => {
-  const member = newState.member;
-  const userId = member.user.id;
-  const guildId = newState.guild.id;
+// client.on("voiceStateUpdate", async (oldState, newState) => {
+//   const member = newState.member;
+//   const userId = member.user.id;
+//   const guildId = newState.guild.id;
 
-  // ===== User entrou num voice channel =====
-  if (!oldState.channelId && newState.channelId) {
-    // XP System: Iniciar tracking
-    voiceTracker.set(userId, {
-      joinTime: Date.now(),
-      guildId: guildId,
-    });
-    console.log(
-      `🎤 ${member.user.tag} joined voice channel: ${newState.channel.name}`,
-    );
+//   // ===== User entrou num voice channel =====
+//   if (!oldState.channelId && newState.channelId) {
+//     // XP System: Iniciar tracking
+//     voiceTracker.set(userId, {
+//       joinTime: Date.now(),
+//       guildId: guildId,
+//     });
+//     console.log(
+//       `🎤 ${member.user.tag} joined voice channel: ${newState.channel.name}`,
+//     );
 
-    // Auto-Role System: Adicionar roles
-    const roles = getRolesForChannel(guildId, newState.channelId);
-    for (const roleId of roles) {
-      try {
-        await member.roles.add(roleId);
-        console.log(
-          `✅ Added role ${roleId} to ${member.user.tag} (joined ${newState.channel.name})`,
-        );
-      } catch (err) {
-        console.error(`❌ Error adding role ${roleId}:`, err);
-      }
-    }
-  }
+//     // Auto-Role System: Adicionar roles
+//     const roles = getRolesForChannel(guildId, newState.channelId);
+//     for (const roleId of roles) {
+//       try {
+//         await member.roles.add(roleId);
+//         console.log(
+//           `✅ Added role ${roleId} to ${member.user.tag} (joined ${newState.channel.name})`,
+//         );
+//       } catch (err) {
+//         console.error(`❌ Error adding role ${roleId}:`, err);
+//       }
+//     }
+//   }
 
-  // ===== User saiu de um voice channel =====
-  if (oldState.channelId && !newState.channelId) {
-    // XP System: Calcular e dar XP
-    const tracker = voiceTracker.get(userId);
-    if (tracker) {
-      const timeInVoice = Date.now() - tracker.joinTime;
-      const minutesInVoice = Math.floor(timeInVoice / 60000);
-      const xpEarned = minutesInVoice * 10; // 10 XP por minuto
+// ===== User saiu de um voice channel =====
+// if (oldState.channelId && !newState.channelId) {
+//   // XP System: Calcular e dar XP
+//   const tracker = voiceTracker.get(userId);
+//   if (tracker) {
+//     const timeInVoice = Date.now() - tracker.joinTime;
+//     const minutesInVoice = Math.floor(timeInVoice / 60000);
+//     const xpEarned = minutesInVoice * 10; // 10 XP por minuto
 
-      if (xpEarned > 0) {
-        addXP(guildId, userId, xpEarned, timeInVoice);
-        console.log(
-          `✅ ${member.user.tag} earned ${xpEarned} XP (${minutesInVoice} minutes in voice)`,
-        );
-      }
+//     if (xpEarned > 0) {
+//       addXP(guildId, userId, xpEarned, timeInVoice);
+//       console.log(
+//         `✅ ${member.user.tag} earned ${xpEarned} XP (${minutesInVoice} minutes in voice)`,
+//       );
+//     }
 
-      voiceTracker.delete(userId);
-    }
+//     voiceTracker.delete(userId);
+//   }
 
-    // Auto-Role System: Remover roles
-    const roles = getRolesForChannel(guildId, oldState.channelId);
-    for (const roleId of roles) {
-      try {
-        await member.roles.remove(roleId);
-        console.log(
-          `🗑️ Removed role ${roleId} from ${member.user.tag} (left ${oldState.channel.name})`,
-        );
-      } catch (err) {
-        console.error(`❌ Error removing role ${roleId}:`, err);
-      }
-    }
-  }
+// Auto-Role System: Remover roles
+//   const roles = getRolesForChannel(guildId, oldState.channelId);
+//   for (const roleId of roles) {
+//     try {
+//       await member.roles.remove(roleId);
+//       console.log(
+//         `🗑️ Removed role ${roleId} from ${member.user.tag} (left ${oldState.channel.name})`,
+//       );
+//     } catch (err) {
+//       console.error(`❌ Error removing role ${roleId}:`, err);
+//     }
+//   }
+// }
 
-  // ===== User mudou de voice channel =====
-  if (
-    oldState.channelId &&
-    newState.channelId &&
-    oldState.channelId !== newState.channelId
-  ) {
-    console.log(
-      `🔄 ${member.user.tag} moved from ${oldState.channel.name} to ${newState.channel.name}`,
-    );
+// ===== User mudou de voice channel =====
+// if (
+//   oldState.channelId &&
+//   newState.channelId &&
+//   oldState.channelId !== newState.channelId
+// ) {
+//   console.log(
+//     `🔄 ${member.user.tag} moved from ${oldState.channel.name} to ${newState.channel.name}`,
+//   );
 
-    // XP System: Manter o tracking (não reseta o tempo)
-    // O tempo continua a contar desde que entrou no primeiro canal
+// XP System: Manter o tracking (não reseta o tempo)
+// O tempo continua a contar desde que entrou no primeiro canal
 
-    // Auto-Role System: Trocar roles
-    // Remover roles do canal antigo
-    const oldRoles = getRolesForChannel(guildId, oldState.channelId);
-    for (const roleId of oldRoles) {
-      try {
-        await member.roles.remove(roleId);
-        console.log(`🗑️ Removed role ${roleId} from ${member.user.tag}`);
-      } catch (err) {
-        console.error(`❌ Error removing role ${roleId}:`, err);
-      }
-    }
+// Auto-Role System: Trocar roles
+// Remover roles do canal antigo
+//     const oldRoles = getRolesForChannel(guildId, oldState.channelId);
+//     for (const roleId of oldRoles) {
+//       try {
+//         await member.roles.remove(roleId);
+//         console.log(`🗑️ Removed role ${roleId} from ${member.user.tag}`);
+//       } catch (err) {
+//         console.error(`❌ Error removing role ${roleId}:`, err);
+//       }
+//     }
 
-    // Adicionar roles do novo canal
-    const newRoles = getRolesForChannel(guildId, newState.channelId);
-    for (const roleId of newRoles) {
-      try {
-        await member.roles.add(roleId);
-        console.log(`✅ Added role ${roleId} to ${member.user.tag}`);
-      } catch (err) {
-        console.error(`❌ Error adding role ${roleId}:`, err);
-      }
-    }
-  }
-});
+//     // Adicionar roles do novo canal
+//     const newRoles = getRolesForChannel(guildId, newState.channelId);
+//     for (const roleId of newRoles) {
+//       try {
+//         await member.roles.add(roleId);
+//         console.log(`✅ Added role ${roleId} to ${member.user.tag}`);
+//       } catch (err) {
+//         console.error(`❌ Error adding role ${roleId}:`, err);
+//       }
+//     }
+//   }
+// });
 
 // Guardar XP de users ainda em voice quando o bot desliga
-process.on("SIGINT", () => {
-  console.log("\n🔴 Bot shutting down...");
+// process.on("SIGINT", () => {
+//   console.log("\n🔴 Bot shutting down...");
 
-  // Processar users ainda em voice
-  voiceTracker.forEach((tracker, userId) => {
-    const timeInVoice = Date.now() - tracker.joinTime;
-    const minutesInVoice = Math.floor(timeInVoice / 60000);
-    const xpEarned = minutesInVoice * 10;
+//   // Processar users ainda em voice
+//   voiceTracker.forEach((tracker, userId) => {
+//     const timeInVoice = Date.now() - tracker.joinTime;
+//     const minutesInVoice = Math.floor(timeInVoice / 60000);
+//     const xpEarned = minutesInVoice * 10;
 
-    if (xpEarned > 0) {
-      addXP(tracker.guildId, userId, xpEarned, timeInVoice);
-      console.log(`💾 Saved ${xpEarned} XP for user ${userId}`);
-    }
-  });
+//     if (xpEarned > 0) {
+//       addXP(tracker.guildId, userId, xpEarned, timeInVoice);
+//       console.log(`💾 Saved ${xpEarned} XP for user ${userId}`);
+//     }
+//   });
 
-  console.log("✅ All voice XP saved!");
-  process.exit(0);
-});
+//   console.log("✅ All voice XP saved!");
+//   process.exit(0);
+// });
 
 // ===== SISTEMA DE ANIVERSÁRIOS =====
 import { EmbedBuilder } from "discord.js";

@@ -8,7 +8,7 @@ export default {
       option
         .setName("message")
         .setDescription("The text for the bot to say")
-        .setRequired(true)
+        .setRequired(true),
     ),
 
   async execute(interaction, client) {
